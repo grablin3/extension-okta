@@ -3,7 +3,8 @@ Okta JWT Authentication for Django REST Framework
 Project: {{projectName}}
 """
 
-from okta_jwt_verifier import JWTVerifier
+import asyncio
+from okta_jwt_verifier import AccessTokenVerifier
 from django.conf import settings
 from rest_framework import authentication, exceptions
 
@@ -41,7 +42,7 @@ class OktaJSONWebTokenAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(f'Token validation failed: {str(e)}')
 
         # Create a simple user object from the token payload
-        user = OktaUser(payload)
+        user = OktaUser(payload, token)
 
         return (user, payload)
 
@@ -57,14 +58,21 @@ class OktaJSONWebTokenAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed('OKTA_ISSUER not configured')
 
         # Create JWT verifier instance
-        jwt_verifier = JWTVerifier(
+        jwt_verifier = AccessTokenVerifier(
             issuer=okta_issuer,
             audience=okta_audience
         )
 
-        # Verify the token
-        # This will raise an exception if verification fails
-        payload = jwt_verifier.verify_access_token(token)
+        # Verify the token asynchronously
+        # okta-jwt-verifier uses async, so we need to run it in an event loop
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        # verify() returns the claims if successful, raises exception if not
+        payload = loop.run_until_complete(jwt_verifier.verify(token))
 
         return payload
 
@@ -74,8 +82,9 @@ class OktaUser:
     Simple user class that represents an Okta authenticated user.
     """
 
-    def __init__(self, payload):
+    def __init__(self, payload, token=None):
         self.payload = payload
+        self.token = token  # Store token for userinfo fallback
         self.id = payload.get('sub')
         self.email = payload.get('email') or payload.get('preferred_username')
         self.is_authenticated = True
