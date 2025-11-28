@@ -1,0 +1,40 @@
+{{=<% %>=}}import { useOktaAuth } from '@okta/okta-react';
+import { useEffect } from 'react';
+
+/**
+ * Okta Callback Page
+ * This page is shown while Okta processes the authentication callback
+ */
+export function OktaCallback() {
+  const { oktaAuth, authState } = useOktaAuth();
+
+  useEffect(() => {
+    if (authState?.error) {
+      console.error('Okta callback error:', authState.error);
+    }
+  }, [authState]);
+
+  if (authState?.error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-destructive">Authentication Error</h1>
+          <p className="mt-2 text-muted-foreground">{authState.error.message}</p>
+          <a href="/" className="mt-4 inline-block text-primary hover:underline">
+            Return to Home
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold">Completing authentication...</h1>
+        <p className="mt-2 text-muted-foreground">Please wait while we log you in.</p>
+      </div>
+    </div>
+  );
+}
+<%={{ }}=%>
