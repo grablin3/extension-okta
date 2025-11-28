@@ -37,6 +37,15 @@
   },
   "scaffoldConfigTemplate": [
     {
+      "key": "oktaIssuer",
+      "label": "Okta Issuer URL",
+      "type": "text",
+      "required": true,
+      "description": "Your Okta issuer URL (e.g., https://your-domain.okta.com/oauth2/default)",
+      "example": "https://your-domain.okta.com/oauth2/default",
+      "category": "authentication"
+    },
+    {
       "key": "enableRbac",
       "label": "Enable Role-Based Access Control (RBAC)",
       "type": "boolean",
@@ -64,17 +73,6 @@
     }
   ],
   "runtimeConfigTemplate": [
-    {
-      "key": "OKTA_ISSUER",
-      "description": "Okta issuer URL (e.g., https://your-domain.okta.com/oauth2/default)",
-      "required": true,
-      "secret": false,
-      "targets": [
-        "backend",
-        "frontend"
-      ],
-      "commonForAllEnv": true
-    },
     {
       "key": "OKTA_CLIENT_ID",
       "description": "Okta application client ID",

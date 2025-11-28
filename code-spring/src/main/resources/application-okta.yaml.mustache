@@ -2,7 +2,7 @@ app:
   auth:
     provider: okta
   okta:
-    issuer: ${SPRING_ENV_OKTA_ISSUER:https://example.okta.com/oauth2/default}
+    issuer: {{{oktaIssuer}}}
     client-id: ${SPRING_ENV_OKTA_CLIENT_ID:your-client-id}
     audience: ${SPRING_ENV_OKTA_AUDIENCE:api://default}
     role-claim-key: {{{roleClaimKey}}}
@@ -18,5 +18,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${SPRING_ENV_OKTA_ISSUER:https://example.okta.com/oauth2/default}
-          jwk-set-uri: ${SPRING_ENV_OKTA_ISSUER:https://example.okta.com/oauth2/default}/v1/keys
+          issuer-uri: {{{oktaIssuer}}}
+          jwk-set-uri: {{{oktaIssuer}}}/v1/keys
