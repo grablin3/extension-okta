@@ -100,7 +100,8 @@
       "targets": [
         "backend"
       ],
-      "commonForAllEnv": false
+      "commonForAllEnv": false,
+      "gitStoreKey": "OKTA_CLIENT_SECRET"
     },
     {
       "key": "OKTA_AUDIENCE",
